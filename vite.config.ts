@@ -4,9 +4,47 @@ import path from 'path';
 import {defineConfig} from 'vite';
 
 export default defineConfig(() => {
+  const isPagesBuild = process.env.BUILD_PAGES === 'true';
+
   return {
     base: './',
-    plugins: [react(), tailwindcss()],
+    plugins: [
+      {
+        name: 'lorentz-vite-entry',
+        transformIndexHtml: {
+          order: 'pre',
+          handler(html) {
+            return html
+              .replace(/<!-- VITE_STRIP_START -->[\s\S]*?<!-- VITE_STRIP_END -->/g, '')
+              .replace(
+                /<!-- VITE_ENTRY_START -->[\s\S]*?<!-- VITE_ENTRY_END -->/,
+                '<script type="module" src="/src/main.tsx"></script>'
+              );
+          },
+        },
+      },
+      react(),
+      tailwindcss(),
+    ],
+    build: isPagesBuild
+      ? {
+          outDir: 'docs',
+          emptyOutDir: true,
+          rollupOptions: {
+            output: {
+              entryFileNames: 'assets/app.js',
+              chunkFileNames: 'assets/[name].js',
+              assetFileNames: (assetInfo) => {
+                const name = assetInfo.names?.[0] ?? '';
+                if (name.endsWith('.css')) {
+                  return 'assets/app.css';
+                }
+                return 'assets/[name]-[hash][extname]';
+              },
+            },
+          },
+        }
+      : undefined,
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),
