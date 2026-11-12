@@ -1,0 +1,6 @@
+{
+  "name": "LorentzLab — Simulador de Relatividad Especial",
+  "description": "Simulador visual interactivo de dilatación del tiempo y contracción de longitud con reloj de luz en 2D, gráficas de Lorentz en vivo y compilación estática compatible con GitHub Pages.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
